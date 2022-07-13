@@ -1,0 +1,57 @@
+---
+title: "ESEM1b Step1"
+author: "Vas"
+date: '2022-07-13'
+output: html_document
+---
+Setup
+```{r, echo=FALSE, warning=FALSE, error=FALSE}
+#install.packages("tidyverse")
+#install.packages("psych")
+#install.packages("lavaan")
+#install.packages("GPArotation")
+#install.packages("semPlot")
+#install.packages("tidyverse")
+remotes::install_github("maria-pro/esem", build_vignettes = TRUE)
+
+library(esem)
+library(tidyverse)
+library(lavaan)
+library(semPlot)
+library(psych)
+
+
+
+```
+Loading the demonstration data
+```{r}
+sdq_lsac<-sdq_lsac
+
+describe(sdq_lsac)
+
+```
+Step 1
+```{r echo=FALSE, warning=FALSE, error=FALSE}
+esem_results<-esem_c(sdq_lsac, nfactors=5, fm = 'ML',
+    rotate="geominT",
+    scores="regression",
+    residuals=TRUE,
+    Target=NULL,
+    missing=TRUE,
+    mimic =c("MPlus"),
+    std.lv=TRUE,
+    ordered = TRUE)
+
+```
+Step 2
+```{r}
+summary(esem_results, fit.measures = TRUE, standardized = TRUE, ci = TRUE)
+
+
+```
+
+Step 3
+```{r}
+ semPaths(esem_results,whatLabels = "std",layout = "tree")
+```
+
