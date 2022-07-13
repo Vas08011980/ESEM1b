@@ -1,0 +1,65 @@
+---
+title: "Step1ba"
+author: "Vas"
+date: '2022-07-13'
+output: html_document
+---
+Setup
+```{r, echo=FALSE, warning=FALSE, error=FALSE}
+#install.packages("tidyverse")
+#install.packages("psych")
+#install.packages("lavaan")
+#install.packages("GPArotation")
+#install.packages("semPlot")
+#install.packages("tidyverse")
+#remotes::install_github("maria-pro/esem", build_vignettes = TRUE)
+
+library(esem)
+library(tidyverse)
+library(lavaan)
+library(semPlot)
+library(psych)
+
+
+
+```
+Loading the demonstration data
+```{r}
+sdq_lsac<-sdq_lsac
+
+describe(sdq_lsac)
+
+```
+Step 1a
+```{r}
+main_loadings_list <- list(
+  pp = c("s6_1", "s11_1R", "s14_1R", "s19_1", "s23_1"),
+  cp = c("s5_1", "s7_1R", "s12_1", "s18_1", "s22_1"),
+  es = c("s3_1", "s8_1", "s13_1", "s16_1", "s24_1"),
+  ha = c("s2_1","s10_1","s15_1","s21_1R","s25_1R"),
+  ps = c("s1_1","s4_1","s9_1","s17_1","s20_1")
+)
+target<-make_target(
+           data=sdq_lsac, 
+           keys=main_loadings_list)
+
+esem_results<-esem_c(data=sdq_lsac, nfactors=5, fm = 'ML',
+    rotate='TARGET',
+    scores="regression",
+    residuals=TRUE,
+    Target=target,
+    missing=TRUE,
+    mimic =c("MPlus"),
+    std.lv=TRUE,
+    ordered = TRUE)
+
+```
+Step 2
+```{r}
+summary(esem_results, fit.measures = TRUE, standardized = TRUE, ci = TRUE)
+```
+Step 3
+```{r}
+semPaths(esem_results,whatLabels = "std",layout = "tree")
+```
+
